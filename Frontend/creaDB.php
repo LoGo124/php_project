@@ -10,7 +10,7 @@
 </head>
 <body>
     <?php
-        createIncidencies();
+        createDadesAmbientals();
     ?>
 </body>
 </html>

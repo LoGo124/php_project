@@ -22,9 +22,8 @@ main {
     border-radius: 10%;
 }
 div {
-    height: 100%;
-    width: auto;
-    border: 3px solid black;
+    height: 100px;
+    border: 2px solid black;
 }
 body {
     background-color: rgb(124, 243, 243);
@@ -67,4 +66,27 @@ img {
 .badLog{
     color: red;
     text-align: left;
+}
+
+.tg  {
+    border-collapse:collapse;
+    border-spacing:0;
+}
+
+.tg td{
+    border-color:black;
+    border-style:solid;
+    border-width:1px;
+    font-family:Arial, sans-serif;
+    font-size:14px;
+    padding:20px 20px;
+    word-break:normal;
+    height: 100px;
+}
+
+.tg .tg-0pky{
+    border-color:inherit;
+    text-align:left;
+    vertical-align:top;
+
 }

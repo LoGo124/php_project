@@ -7,7 +7,6 @@ class DB{
             if ($DBName != ""){
                 $this->conn->query("USE $DBName;");
             }
-            $this->updateGetLastID();
             echo "<p class=\"goodLog\">[+]Connected successfully</p>";
             return TRUE;
         }
@@ -103,8 +102,11 @@ class DB{
         }
     }
             
-    function getData(String $TName){
-        $sql = "SELECT * FROM $TName";
+    function getData(String $TName, string $condition = ""){
+        $sql = "SELECT * FROM $TName ";
+        if ($condition) {
+            $sql .= "WHERE $condition";
+        }
         try {
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();
@@ -143,9 +145,9 @@ class DB{
           }
     }
 
-    function updateGetLastID(){
+    function updateGetLastID(string $TName){
         try {
-            if ($data = $this->getData("Incidencies")){
+            if ($data = $this->getData($TName)){
                 $this->lastID = max(array_keys($data));
                 return $this->lastID;
             }
