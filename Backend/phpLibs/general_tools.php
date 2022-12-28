@@ -111,7 +111,7 @@ function saveOnSession(array $contingut){
     }
 }
 
-# Esbortar les dades amb keys a la llista entrada
+# Esborrar les dades amb keys a la llista entrada
 function delOnSession($keys){
     foreach ($keys as $realKey => $key) {
         if (checKey($key, $_SESSION)){
@@ -132,4 +132,42 @@ function implodeKeyVal(array $arrayAsoc = null, string $sep = "", string $sepKey
     $str .= implode($sep,$unformated).$footer;
     return $str;
 }
+
+function printTable($data, $titol = ""){
+    if ($titol) {
+        echo "<div><h2>$titol</h2>";
+    }
+    echo "<table>";
+    // recorre el array de datos fila a fila
+    foreach ($data as $row) {
+      echo "<tr>";
+      // recorre cada celda de la fila
+      foreach ($row as $cell) {
+        echo "<td>$cell</td>";
+      }
+      echo "</tr>";
+    }
+    echo "</table>";
+    if ($titol) {
+        echo "</div>";
+    }
+}
+
+//function printTable(array $data, string $autoSelect = "" ){
+//    echo "<form action=\"dadesClimatiques.php\" method=\"post\"><table><tr><th>ID</th><th>Dispositiu</th><th>Data</th><th>Solicitant</th><th>Correu</th><th>Descripcio</th><th><input type=\"submit\" value=\"tot\" name=\"query\"></th></tr>";
+//    foreach ($data as $row) {
+//        echo "<tr>";
+//        foreach ($row as $key => $value) {
+//            if ($key == "id") {
+//                echo "<td><input type=\"submit\" value=\"$value\" name=\"mod\"></td>";
+//            }
+//            else {
+//                echo "<td>$value</td>";
+//            }
+//        }
+//        echo "<td><input type=\"checkbox\" name=\"".$row["id"]."\" $autoSelect></td></tr>";
+//    }
+//    echo "</table><input type=\"submit\" value=\"<---\" name=\"<---\"><input type=\"submit\" value=\"Esborrar\" name=\"del\"></form>";
+//    
+//}
 ?>
