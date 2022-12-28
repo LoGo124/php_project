@@ -57,8 +57,8 @@ class DB{
         }
         $sql .= implode(", ",$toInsert).")";
         try {
+            print_r($sql);
             $this->conn->exec($sql);
-            $this->updateGetLastID();
             echo "<p class=\"goodLog\">[+] New record created successfully</p>";
         }
         catch(PDOException $e) {
