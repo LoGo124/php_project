@@ -9,42 +9,25 @@
     function main(){
         // DEBUG CONTROL
             //POST Contiene los datos de a que intentamos acceder
-        print_r("\nPOST = ".$_POST);
+        print_r($_POST);
             //COOKIE Contiene los datos de la ultima conexión tmb login y passwd, si hace mas de 3h o no hay, se conecta a la base de datos para actualizar los datos
-        setcookie("galetes_GNJ",);
-        print_r("\nCOOKIE = ".$_COOKIE);
+        setcookie("galetes_GNJ","hi", time() + (3600 * 3));
+        print_r($_COOKIE);
             //SESSION Contiene los datos del usuario
-        print_r("\nSESSION = ".$_SESSION);
+        print_r($_SESSION);
         if (isset($_SESSION)) {
             print_r("\n TRUE");
         }
 
-        $loged = false;
+        $loged = checkLog();
 
-        if ($_POST["username"]) {
-            # code...
-            $loged = true;
-        }
-        elseif (isset($_SESSION) && isset($_COOKIE["galetes_GNJ"])) {
-            printLoginPage($_SESSION["userName"]);
-            $loged = true;
-        }
-        elseif (isset($_SESSION)) {
-            printLoginPage($_SESSION["userName"]);
-        }
-        elseif (isset($_COOKIE["galetes_GNJ"])) {
-            printLoginPage($_COOKIE["galetes_GNJ"]["userName"]);
-        }
-        else {
-            printLoginPage();
-        }
-
-        if ($loged) {
-            printHome();
+        
+        if ($loged && isset($_POST["parte"])) {
+            printHome($_POST["parte"]);
             if ($MyDB = new DB("127.0.0.1","user","aplicacions","dadesAmbientals",3306)) {
-                $rawYData = $MyDB->getData("dades_any");
-                $rawMData = $MyDB->getData("dades_mes");
-
+                $rawYData = $MyDB->getData("dades_any","ubicacio='".$_POST["parte"]."'");
+                $rawMData = $MyDB->getData("dades_mes","ubicacio='".$_POST["parte"]."'");
+                
                 $YData = procesSetY($rawYData);
                 $MData = procesSetM($rawMData);
 
@@ -53,6 +36,18 @@
             else {
                 echo "<h1>[-] No s'ha pogut accedir a la base de dades.</h1>";
             }
+        }
+        elseif ($loged) {
+            printHome();
+            if ($MyDB = new DB("127.0.0.1","user","aplicacions","dadesAmbientals",3306)) {
+                # DATOS GENERALES
+            }
+            else {
+                echo "<h1>[-] No s'ha pogut accedir a la base de dades.</h1>";
+            }
+        }
+        else {
+            printLoginPage();
         }
     }
 
@@ -63,9 +58,7 @@
 
     function printHome($section = "general"){
         $sectons = array("general", "Labavo", "Habitacio 1", "Habitacio 2", "Cuina", "Menjador", "Pasadis", "Servidors");
-        
         $sectionsClasses = array();
-
         $general = FALSE;
         if ($section == "general") {
             $general = TRUE;
@@ -145,14 +138,74 @@
             echo "<h1> ERROR $var </h1>";
         }
     }
+
+    #Security
+    function checkLog(){
+        if ($_POST["username"]) {
+            return (true);
+        }
+        elseif (isset($_SESSION) && isset($_COOKIE["galetes_GNJ"])) {
+            printLoginPage($_SESSION["userName"]);
+            return (true);
+        }
+        elseif (isset($_SESSION)) {
+            printLoginPage($_SESSION["userName"]);
+            return (true);
+        }
+        elseif (isset($_COOKIE["galetes_GNJ"])) {
+            #printLoginPage($_COOKIE["galetes_GNJ"]["userName"]);
+            return (true);
+        }
+        else {
+            printLoginPage();
+            return (true);
+        }
+
+    }
     
     #Procesado de datos
     function procesSetM(array $dataM){
-        # code...
+        $cleanData = array("header" => array("", "MIN", "MED", "MAX"), "temp" => array("rowTitle" => "T", "min" => 101, "med" => 0, "max" => 0), "hum" => array("rowTitle" => "H", "min" => 101, "med" => 0, "max" => 0));
+        $count = 0;
+        foreach ($dataM as $id => $reg) {
+            $temp[] = $reg["temperatura"];
+            $hum[] = $reg["humitat"];
+            $cleanData["temp"]["med"] += $reg["temperatura"];
+            $cleanData["hum"]["med"] += $reg["humitat"];
+            $count++;
+        }
+        $cleanData["temp"]["min"] = min($temp);
+        $cleanData["temp"]["max"] = max($temp);
+        $cleanData["hum"]["min"] = min($hum);
+        $cleanData["hum"]["max"] = max($hum);
+        $cleanData["temp"]["med"] = round(($cleanData["temp"]["med"] / $count), 2);
+        $cleanData["hum"]["med"] = round(($cleanData["hum"]["med"] / $count), 2);
+        return($cleanData);
     }
 
     function procesSetY(array $dataY){
-        # code...
+        $cleanData = array("header" => array("", "MIN", "MED", "MAX"), "temp" => array("rowTitle" => "T", "min" => 101, "med" => 0, "max" => 0), "hum" => array("rowTitle" => "H", "min" => 101, "med" => 0, "max" => 0));
+        $count = 0;
+        foreach ($dataY as $id => $reg) {
+            if ($cleanData["temp"]["min"] > $reg["Tmin"] ) {
+                $cleanData["temp"]["min"] = $reg["Tmin"];
+            }
+            if ($cleanData["hum"]["min"] > $reg["Tmin"] ) {
+                $cleanData["hum"]["min"] = $reg["Hmin"];
+            }
+            if ($cleanData["temp"]["max"] < $reg["Tmax"] ) {
+                $cleanData["temp"]["max"] = $reg["Tmax"];
+            }
+            if ($cleanData["hum"]["max"] < $reg["Hmax"] ) {
+                $cleanData["hum"]["max"] = $reg["Hmax"];
+            }
+            $cleanData["temp"]["med"] += $reg["Tmed"];
+            $cleanData["hum"]["med"] += $reg["Hmed"];
+            $count++;
+        }
+        $cleanData["temp"]["med"] = round(($cleanData["temp"]["med"] / $count), 2);
+        $cleanData["hum"]["med"] = round(($cleanData["hum"]["med"] / $count), 2);
+        return($cleanData);
     }
 
     # Dev Tools (Preparación de la base de datos)
@@ -179,14 +232,14 @@
                                                     "Hmed"=>array("FLOAT", "NOT NULL"),
                                                     "Tmax"=>array("FLOAT", "NOT NULL"),
                                                     "Hmax"=>array("FLOAT", "NOT NULL")));
-            if (False /* True*/ ) {
+            if (/*False */ True ) {
                 genRegs();
             }                         
         }
     }
 
     function genRegs(){
-        $habs = array("Lavabo", "Habitacio 1", "Habitacio 2", "Cuina", "Menjador", "Pasadis", "Servidors");
+        $habs = array("Labavo", "Habitacio 1", "Habitacio 2", "Cuina", "Menjador", "Pasadis", "Servidors");
         $horas = array("00:00:00", "08:00:00", "16:00:00");
         $diasmes = array("2023-01-01", "2023-01-02", "2023-01-03", "2023-01-04", "2023-01-05", "2023-01-06", "2023-01-07", "2023-01-08", "2023-01-09");
         
