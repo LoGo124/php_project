@@ -7,7 +7,7 @@ class DB{
             if ($DBName != ""){
                 $this->conn->query("USE $DBName;");
             }
-            echo "<p class=\"goodLog\">[+]Connected successfully</p>";
+            #echo "<p class=\"goodLog\">[+]Connected successfully</p>";
             return TRUE;
         }
         catch(PDOException $e){
