@@ -7,11 +7,11 @@
      * 
      */
     function main(){
+        $loged = checkLog();
         // DEBUG CONTROL
             //POST Contiene los datos de a que intentamos acceder
         print_r($_POST);
             //COOKIE Contiene los datos de la ultima conexión tmb login y passwd, si hace mas de 3h o no hay, se conecta a la base de datos para actualizar los datos
-        setcookie("galetes_GNJ","hi", time() + (3600 * 3));
         print_r($_COOKIE);
             //SESSION Contiene los datos del usuario
         print_r($_SESSION);
@@ -19,7 +19,6 @@
             print_r("\n TRUE");
         }
 
-        $loged = checkLog();
 
         
         if ($loged && isset($_POST["parte"])) {
@@ -31,7 +30,7 @@
                 $YData = procesSetY($rawYData);
                 $MData = procesSetM($rawMData);
 
-                printDatos($YData, $MData);
+                printDatos($YData, $MData, $_POST["parte"]);
             }
             else {
                 echo "<h1>[-] No s'ha pogut accedir a la base de dades.</h1>";
@@ -141,19 +140,26 @@
 
     #Security
     function checkLog(){
-        if ($_POST["username"]) {
+        if (isset($_POST["username"])) {
+            saveOnSession(array("username" => $_POST["username"], $_POST["password"]));
+            setcookie("username", $_POST["username"], time() + (3600 * 3));
             return (true);
         }
         elseif (isset($_SESSION) && isset($_COOKIE["galetes_GNJ"])) {
-            printLoginPage($_SESSION["userName"]);
+            //if () {
+            //    # code...
+            //} else {
+            //    # code...
+            //}
             return (true);
         }
         elseif (isset($_SESSION)) {
+            printError("Sessio caducada");
             printLoginPage($_SESSION["userName"]);
             return (true);
         }
         elseif (isset($_COOKIE["galetes_GNJ"])) {
-            #printLoginPage($_COOKIE["galetes_GNJ"]["userName"]);
+            printLoginPage($_COOKIE["galetes_GNJ"]["username"]);
             return (true);
         }
         else {

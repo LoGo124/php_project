@@ -100,11 +100,10 @@ function resetSessio(){
 
 # Guarda la llista entrada, una funció una mica inutil
 function saveOnSession(array $contingut){
-    try{
+    try {
         session_start();
-    }
-    finally{
-        #no pasa na seguramente ya esta iniciada
+    } catch (\Throwable $th) {
+        
     }
     foreach ($contingut as $key => $value) {
         $_SESSION[$key] = $value;
