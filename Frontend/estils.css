@@ -41,7 +41,6 @@ div {
    
     
 }
-
 div div {
     height: 250px;
     width: 1000px;
@@ -51,6 +50,14 @@ div div {
     transform: translate(0, -45%);
     
 }
+
+div#Cuina{
+    background-color: darkmagenta;
+}
+
+div#Habitacio\ 1{
+    background-color:seagreen
+} 
 
 body {
     background-color: rgb(124, 243, 243);
