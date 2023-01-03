@@ -22,7 +22,7 @@ main {
     border-radius: 10%;
 }
 div {
-    height: 100px;
+    height: 250px;
     border: 2px solid black;
 }
 body {
@@ -41,6 +41,7 @@ td {
     text-align: center;
     border: 2px;
     background-color: dimgrey;
+    
 }
 
 label {
@@ -71,6 +72,7 @@ img {
 .tg  {
     border-collapse:collapse;
     border-spacing:0;
+    
 }
 
 .tg td{
@@ -89,4 +91,11 @@ img {
     text-align:left;
     vertical-align:top;
 
+}
+
+table{
+    margin-left: auto;
+    margin-right: auto;
+    width: 50px;
+    
 }
