@@ -10,12 +10,12 @@
         $loged = checkLog();
         // DEBUG CONTROL
             //POST Contiene los datos de a que intentamos acceder
-        print_r($_POST);
-            //COOKIE Contiene los datos de la ultima conexión tmb login y passwd, si hace mas de 3h o no hay, se conecta a la base de datos para actualizar los datos
-        print_r($_COOKIE);
-            //SESSION Contiene los datos del usuario
-        print_r($_SESSION);
-        print_r(session_id());
+        #print_r($_POST);
+        #    //COOKIE Contiene los datos de la ultima conexión tmb login y passwd, si hace mas de 3h o no hay, se conecta a la base de datos para actualizar los datos
+        #print_r($_COOKIE);
+        #    //SESSION Contiene los datos del usuario
+        #print_r($_SESSION);
+        #print_r(session_id());
         
         if ($loged && isset($_POST["parte"])) {
             printHome($_POST["parte"]);
@@ -54,6 +54,9 @@
     /**
      * Dona la benvinguda als usuaris que no han iniciat sesió o ha caducat hi han de tornar a posar la contrasenya.
      */
+    function printNav(){
+        # code...
+    }
 
     function printHome($section = "general"){
         $sectons = array("general", "Labavo", "Habitacio 1", "Habitacio 2", "Cuina", "Menjador", "Pasadis", "Servidors");
@@ -102,7 +105,7 @@
     }
 
     function printDatos($YData, $MData, $section = "general"){
-        echo "<div><h2>".$section."</h2>";
+        echo "<div id=\"$section\"><h2>".$section."</h2>";
         printTable($YData, "Dades de l'any");
         printTable($MData, "Dades del mes");
         echo"</div>";
@@ -143,17 +146,11 @@
         session_start();
         if (isset($_POST["username"])) {
             saveOnSession(array("username" => $_POST["username"],"session_id" => $_POST["password"]));
-            setcookie("username", $_POST["username"], time() + (3600 * 3));
-            setcookie("session_id", session_id(), time() + (3600 * 3));
+            setcookie("username", $_POST["username"], time() + (60 * 3));
+            setcookie("session_id", session_id(), time() + (60 * 3));
             return (true);
         }
         elseif (isset($_SESSION) && isset($_COOKIE["session_id"]) && $_COOKIE["session_id"] == session_id()) {
-            print_r("HOLA PUTO PAL");
-            //if () {
-            //    # code...
-            //} else {
-            //    # code...
-            //}
             return (true);
         }
         elseif (isset($_SESSION["username"])) {
@@ -161,9 +158,9 @@
             printLoginPage($_SESSION["username"]);
             return (false);
         }
-        elseif (isset($_COOKIE["galetes_GNJ"])) {
-            printLoginPage($_COOKIE["galetes_GNJ"]["username"]);
-            return (true);
+        elseif (isset($_COOKIE["username"])) {
+            printLoginPage($_COOKIE["username"]);
+            return (false);
         }
         else {
             printLoginPage();
