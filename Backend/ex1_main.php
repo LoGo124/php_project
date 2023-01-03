@@ -15,11 +15,7 @@
         print_r($_COOKIE);
             //SESSION Contiene los datos del usuario
         print_r($_SESSION);
-        if (isset($_SESSION)) {
-            print_r("\n TRUE");
-        }
-
-
+        print_r(session_id());
         
         if ($loged && isset($_POST["parte"])) {
             printHome($_POST["parte"]);
@@ -40,13 +36,17 @@
             printHome();
             if ($MyDB = new DB("127.0.0.1","user","aplicacions","dadesAmbientals",3306)) {
                 # DATOS GENERALES
+                $rawYData = $MyDB->getData("dades_any");
+                $rawMData = $MyDB->getData("dades_mes");
+                
+                $YData = procesSetY($rawYData);
+                $MData = procesSetM($rawMData);
+
+                printDatos($YData, $MData);
             }
             else {
                 echo "<h1>[-] No s'ha pogut accedir a la base de dades.</h1>";
             }
-        }
-        else {
-            printLoginPage();
         }
     }
 
@@ -116,7 +116,7 @@
         <body>
             <h1>Benvingut al sistema de dades climatiques de la casa.</h1>
             <p>Por favor, ingrese su nombre de usuario y contraseña para acceder a su cuenta.</p>
-            <form method=\"post\" action=\"dadesClimatiques.php\">
+            <form method=\"post\" action=\"dadesClimatiques.php\" id=\"login\">
                 <label for=\"username\">Nombre de usuario:</label>
                 <input type=\"text\" id=\"username\" name=\"username\" value=\"$userName\"><br>
                 <label for=\"password\">Contraseña:</label>
@@ -140,12 +140,15 @@
 
     #Security
     function checkLog(){
+        session_start();
         if (isset($_POST["username"])) {
-            saveOnSession(array("username" => $_POST["username"], $_POST["password"]));
+            saveOnSession(array("username" => $_POST["username"],"session_id" => $_POST["password"]));
             setcookie("username", $_POST["username"], time() + (3600 * 3));
+            setcookie("session_id", session_id(), time() + (3600 * 3));
             return (true);
         }
-        elseif (isset($_SESSION) && isset($_COOKIE["galetes_GNJ"])) {
+        elseif (isset($_SESSION) && isset($_COOKIE["session_id"]) && $_COOKIE["session_id"] == session_id()) {
+            print_r("HOLA PUTO PAL");
             //if () {
             //    # code...
             //} else {
@@ -153,10 +156,10 @@
             //}
             return (true);
         }
-        elseif (isset($_SESSION)) {
+        elseif (isset($_SESSION["username"])) {
             printError("Sessio caducada");
-            printLoginPage($_SESSION["userName"]);
-            return (true);
+            printLoginPage($_SESSION["username"]);
+            return (false);
         }
         elseif (isset($_COOKIE["galetes_GNJ"])) {
             printLoginPage($_COOKIE["galetes_GNJ"]["username"]);
@@ -164,7 +167,7 @@
         }
         else {
             printLoginPage();
-            return (true);
+            return (false);
         }
 
     }
