@@ -3,16 +3,28 @@
 * {
     font-family: 'Montserrat', sans-serif;
 }
-
-header *{
+header{
+    background-color: blueviolet;
+    height: 100%;
+    text-align: left;
+    font-size: 30px;
+    height: 40px;
     margin: 0px;
+    padding: 1%;
+}
+
+h3{
+    margin: 5px;
 }
 
 header div{
     position: relative;
     float: right;
-    height: 8%;
-    width: 1%;
+    height: auto;
+    width: auto;
+    top: 1px;
+    margin: 0px;
+    padding: 0%;
 }
 
 .login{
@@ -21,6 +33,7 @@ header div{
     text-align: center;
     margin-left: auto;
     margin-right: auto;
+    float: none;
     height: 30%;
     width: 20%;
     padding: 5% 5%;
@@ -28,13 +41,13 @@ header div{
 } 
 
 form {
-    position: absolute;
-    height: 85%;
-    border: 2px solid black;
+    position: relative;
+    float: left;
+    width: 39%;
+    margin: 1%;
+    border: 1px solid black;
     background-color: burlywood;
     top: 8%;
-    width: 40%;
-    margin: 2%;
 };
 
 main {
@@ -45,22 +58,22 @@ main {
 }
 div div {
     height: auto;
-    width: 99.5%;
-    border: 2px solid;
+    width: 100%;
+    border: 0px solid;
     position: relative;
-    top: 50px;
-    transform: translate(0, -45%);
     background-color: aliceblue;
+    margin: 0%;
+    padding-bottom: 0%;
 }
 div {
-    position: absolute;
+    position: relative;
     float: right;
-    height: 85%;
+    height: 100%;
     width: 50%;
     border: 1px solid;
-    top: 55%;
-    transform: translate(95%, -50%);
+    margin: 1%;
     background-color: rgb(86, 86, 87);
+    padding-bottom: 5%;
 }
 
 div#Cuina{
@@ -101,19 +114,8 @@ div div table{
     
 }
 
-header{
-    background-color: blueviolet;
-    width: 100%;
-    height: 100%;
-}
 
-header h3 {
-    text-align: left;
-    font-size: 30px;
-    margin-top: 0%;
-    height: 40px;
-    padding-left: 1%;
-}
+
 body {
     background-color: rgb(124, 243, 243);
     text-align: center;

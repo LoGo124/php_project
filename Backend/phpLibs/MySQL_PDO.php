@@ -102,10 +102,16 @@ class DB{
         }
     }
             
-    function getData(String $TName, string $condition = ""){
+    function getData(String $TName, string $condition = "", $orderField = "", string $order = "ASC", string $limit = ""){
         $sql = "SELECT * FROM $TName ";
         if ($condition) {
             $sql .= "WHERE $condition";
+        }
+        if ($orderField) {
+            $sql .= " ORDER BY $orderField $order";
+        }
+        if ($limit) {
+            $sql .= " LIMIT $limit";
         }
         try {
             $stmt = $this->conn->prepare($sql);

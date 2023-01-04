@@ -28,21 +28,23 @@
                     printHome();
                     $ubi = "ubicacio = ubicacio";
                 }
+                $rawLData = $MyDB->getData("dades_mes",$ubi, "datahora", "DESC", "1");
                 $rawYData = $MyDB->getData("dades_any",$ubi);
                 $rawMData = $MyDB->getData("dades_mes",$ubi);
                 $rawDData = $MyDB->getData("dades_mes",$ubi." AND `datahora` LIKE '%".date("Y-m-d")."%'");
                 
+                $LData = procesSetL($rawLData);
                 $YData = procesSetY($rawYData);
                 $MData = procesSetM($rawMData);
                 $DData = procesSetD($rawDData);
 
-                printDatos($YData, $MData, $DData);
+                printDatos($LData, $YData, $MData, $DData);
             }
             else {
                 echo "<h1>[-] No s'ha pogut accedir a la base de dades.</h1>";
             }
         }
-        elseif (isset($_SESSION)) {
+        elseif (isset($_SESSION["username"])) {
             printLoginPage($_SESSION["username"]);
         }
         elseif (isset($_COOKIE["username"])) {
@@ -58,10 +60,10 @@
      * Dona la benvinguda als usuaris que no han iniciat sesió o ha caducat hi han de tornar a posar la contrasenya.
      */
     function printNav($loged){
-        echo "<header> <a href=\"https://127.0.0.1/phpcasero/php_project/Frontend/dadesClimatiques.php\"><h3>Sweat Smart Home</h3></a> ";
+        echo "<header> <a href=\"https://127.0.0.1/phpcasero/php_project/Frontend/dadesClimatiques.php\">Sweat Smart Home</a> ";
         echo "<div class=\"user\">";
         if ($loged) {
-            echo $_COOKIE["username"];
+            echo (isset($_COOKIE["username"])) ? $_COOKIE["username"] : $_POST["username"];
         }
         else {
             echo "";
@@ -116,9 +118,10 @@
         </form>";
     }
 
-    function printDatos($YData, $MData, $DData){
+    function printDatos($LData, $YData, $MData, $DData){
         $section = (isset($_POST["parte"])) ? $_POST["parte"] : "GENERAL" ;
         echo "<div id=\"$section\"><h2>".$section."</h2>";
+        printTable($LData, "Últim registre");
         printTable($YData, "Dades de l'any");
         printTable($MData, "Dades del mes");
         printTable($DData, "Dades del dia");
@@ -189,6 +192,11 @@
     }
 
     #Procesado de datos
+    function procesSetL(array $dataL){
+        $LData = array_values($dataL)[0];
+        return (array(array("Ubicacio","Data i hora", "T", "H"), array($LData["ubicacio"], $LData["datahora"], $LData["temperatura"], $LData["humitat"])));
+    }
+
     function procesSetD(array $dataD){
         $cleanData = array("header" => array("", "MIN", "MED", "MAX"), "temp" => array("rowTitle" => "T", "min" => 101, "med" => 0, "max" => 0), "hum" => array("rowTitle" => "H", "min" => 101, "med" => 0, "max" => 0));
         $count = 0;
