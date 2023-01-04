@@ -67,11 +67,11 @@
         
     }
 
-    function printHome($section = "general"){
-        $sectons = array("general", "Labavo", "Habitacio 1", "Habitacio 2", "Cuina", "Menjador", "Pasadis", "Servidors");
+    function printHome($section = "GENERAL"){
+        $sectons = array("GENERAL", "Labavo", "Habitacio 1", "Habitacio 2", "Cuina", "Menjador", "Pasadis", "Servidors");
         $sectionsClasses = array();
         $general = FALSE;
-        if ($section == "general") {
+        if ($section == "GENERAL") {
             $general = TRUE;
         }
 
@@ -113,7 +113,7 @@
         </form>";
     }
 
-    function printDatos($YData, $MData, $section = "general"){
+    function printDatos($YData, $MData, $section = "GENERAL"){
         echo "<div id=\"$section\"><h2>".$section."</h2>";
         printTable($YData, "Dades de l'any");
         printTable($MData, "Dades del mes");
