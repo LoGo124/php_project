@@ -4,15 +4,20 @@
     font-family: 'Montserrat', sans-serif;
 }
 
+header *{
+    margin: 0px;
+}
+
 header div{
-    inset-block: 1;
-    height: 1%;
+    position: relative;
+    float: right;
+    height: 8%;
     width: 1%;
 }
 
 .login{
+    position: relative;
     border: 2px solid black;
-    width: max-content;
     text-align: center;
     margin-left: auto;
     margin-right: auto;
@@ -22,52 +27,40 @@ header div{
     background-color: tomato;
 } 
 
-
 form {
-    border: 0.2vw solid black;
+    position: absolute;
+    height: 85%;
+    border: 2px solid black;
     background-color: burlywood;
-    width: 35%;
-    margin-left: 2%;
-
+    top: 8%;
+    width: 40%;
+    margin: 2%;
 };
 
-
-
-h2 {
-    color: blue;
-    font-size: 0.2vw;
-
-}
-h3 {
-    color: red;
-}
 main {
     height: 100%;
     width: 100%;
-    border: 0.4vw solid black;
+    border: 2px solid black;
     border-radius: 10%;
 }
-div {
-    height: 55%;
-    width: 50%;
-    border: 0.4vw solid;
-    position: absolute;
-    top: 35%;
-    transform: translate(95%, -50%);
-    background-color: rgb(86, 86, 87);
-   
-   
-    
-}
 div div {
-    height: 35%;
-    width: 99%;
-    border: 0.4vw solid;
-    position: absolute;
-    top: 35%;
+    height: auto;
+    width: 99.5%;
+    border: 2px solid;
+    position: relative;
+    top: 50px;
     transform: translate(0, -45%);
     background-color: aliceblue;
-    
+}
+div {
+    position: absolute;
+    float: right;
+    height: 85%;
+    width: 50%;
+    border: 1px solid;
+    top: 55%;
+    transform: translate(95%, -50%);
+    background-color: rgb(86, 86, 87);
 }
 
 div#Cuina{
@@ -96,28 +89,11 @@ div#Menjador{
 
 div#Labavo{
     background-color:rgb(180, 145, 145)
-} 
-
-#Dades\ del\ mes {
-    height: 35%;
-    width: 99%;
-    border: 5px solid;
-    position: absolute;
-    top: 80%;
-    transform: translate(0, -45%);
-    background-color: aliceblue;
-
-}
-
-#Dades\ del\ mes table{
-    height: 55%;
-    width: 99%;
-    font-size: 0.9vw;
 }
 
 div div table{
-    height: 45%;
-    width: 99%;
+    height: auto;
+    width: 100%;
     font-size: 0.9vw;
 }
 .selectedClass {
@@ -129,8 +105,6 @@ header{
     background-color: blueviolet;
     width: 100%;
     height: 100%;
-    
-
 }
 
 header h3 {
@@ -213,6 +187,4 @@ table{
     margin-left: auto;
     margin-right: auto;
     width: 100%;
-    
 }
-

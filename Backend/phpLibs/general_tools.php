@@ -129,7 +129,7 @@ function implodeKeyVal(array $arrayAsoc = null, string $sep = "", string $sepKey
 
 function printTable($data, $titol = ""){
     if ($titol) {
-        echo "<div id=\"$titol\"><h2>$titol</h2>";
+        echo "<div id=\"$titol\"><h3>$titol</h3>";
     }
     echo "<table>";
     // recorre el array de datos fila a fila
