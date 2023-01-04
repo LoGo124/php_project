@@ -18,17 +18,19 @@
 
 
 form {
-    border: 2px solid black;
-    width: 35%;
-    height: 550px;
+    border: 0.2vw solid black;
     background-color: burlywood;
-    
+    width: 35%;
+    margin-left: 2%;
+
 };
 
 
 
 h2 {
     color: blue;
+    font-size: 0.2vw;
+
 }
 h3 {
     color: red;
@@ -36,25 +38,25 @@ h3 {
 main {
     height: 100%;
     width: 100%;
-    border: 3px solid black;
+    border: 0.4vw solid black;
     border-radius: 10%;
 }
 div {
     height: 55%;
     width: 50%;
-    border: 5px solid;
+    border: 0.4vw solid;
     position: absolute;
-    top: 29%;
-    transform: translate(75%, -50%);
+    top: 35%;
+    transform: translate(95%, -50%);
     background-color: rgb(86, 86, 87);
    
    
     
 }
 div div {
-    height: 50%;
+    height: 35%;
     width: 99%;
-    border: 5px solid;
+    border: 0.4vw solid;
     position: absolute;
     top: 35%;
     transform: translate(0, -45%);
@@ -90,7 +92,7 @@ div#Labavo{
     background-color:rgb(180, 145, 145)
 } 
 
-div#Dades\ del\ mes {
+#Dades\ del\ mes {
     height: 35%;
     width: 99%;
     border: 5px solid;
@@ -101,15 +103,41 @@ div#Dades\ del\ mes {
 
 }
 
+#Dades\ del\ mes table{
+    height: 55%;
+    width: 99%;
+    font-size: 0.9vw;
+}
 
+div div table{
+    height: 45%;
+    width: 99%;
+    font-size: 0.9vw;
+}
 .selectedClass {
  background-color: red;
     
 }
 
+header{
+    background-color: blueviolet;
+    width: 100%;
+    height: 100%;
+    
+
+}
+
+header h3 {
+    text-align: left;
+    font-size: 30px;
+    margin-top: 0%;
+    height: 40px;
+    padding-left: 1%;
+}
 body {
     background-color: rgb(124, 243, 243);
     text-align: center;
+    margin: 0%;
 }
 li {
     text-align: center;
@@ -155,8 +183,7 @@ img {
     border-collapse:collapse;
     border-spacing:0;
     box-sizing: border-box;
-    width: 100%;
-    height: 94%;
+    
 }
 
 .tg td{
@@ -171,14 +198,15 @@ img {
 
 .tg .tg-0pky{
     border-color:inherit;
-   
+    padding: 12% 0%;
+    
 
 }
 
 table{
     margin-left: auto;
     margin-right: auto;
-    width: 50px;
+    width: 100%;
     
 }
 
