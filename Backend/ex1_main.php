@@ -60,7 +60,7 @@
      * Dona la benvinguda als usuaris que no han iniciat sesió o ha caducat hi han de tornar a posar la contrasenya.
      */
     function printNav($loged){
-        echo "<header> <a href=\"https://127.0.0.1/phpcasero/php_project/Frontend/dadesClimatiques.php\">Sweat Smart Home</a> ";
+        echo "<header> <a href=\"dadesClimatiques.php\">Sweat Smart Home</a> ";
         echo "<div class=\"user\">";
         if ($loged) {
             echo (isset($_COOKIE["username"])) ? $_COOKIE["username"] : $_POST["username"];
