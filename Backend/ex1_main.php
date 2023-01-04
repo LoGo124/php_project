@@ -10,13 +10,13 @@
         $loged = checkLog();
         // DEBUG CONTROL
             //POST Contiene los datos de a que intentamos acceder
-        #print_r($_POST);
+        print_r($_POST);
         #    //COOKIE Contiene los datos de la ultima conexión tmb login y passwd, si hace mas de 3h o no hay, se conecta a la base de datos para actualizar los datos
         #print_r($_COOKIE);
         #    //SESSION Contiene los datos del usuario
         #print_r($_SESSION);
         #print_r(session_id());
-        
+        printNav($loged);
         if ($loged && isset($_POST["parte"])) {
             printHome($_POST["parte"]);
             if ($MyDB = new DB("127.0.0.1","user","aplicacions","dadesAmbientals",3306)) {
@@ -56,12 +56,12 @@
      */
     function printNav($loged){
         echo "<header><h3>Sweat Smart Home</h3>";
-        echo "<div id=\"user\">";
+        echo "<div class=\"user\">";
         if ($loged) {
             echo $_COOKIE["username"];
         }
         else {
-            echo "?";
+            echo "";
         }
         echo "</div></header>";
         
@@ -156,12 +156,12 @@
         if (isset($_POST["username"])) {
             if (checkPasswd($_POST["username"], $_POST["password"])) {
                 saveOnSession(array("username" => $_POST["username"],"session_id" => $_POST["password"]));
-                setcookie("username", $_POST["username"], time() + (60 * 3));
-                setcookie("session_id", session_id(), time() + (60 * 3));
+                setcookie("username", $_POST["username"], time() + (60 * 20));
+                setcookie("session_id", session_id(), time() + (60 * 20));
+                unset($_POST["username"]);
                 return (true);
             }
             else {
-                //guardarDatos("C:/xampp/htdocs/phpcasero/php_project/Backend/jsons/passwds.json", array($_POST["username"] => $_POST["password"]),"json");
                 return (false);
             }
         }
