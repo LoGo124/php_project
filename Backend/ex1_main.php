@@ -161,7 +161,7 @@
                 return (true);
             }
             else {
-                guardarDatos("../Backend/passwds.json", array($_POST["username"], $_POST["password"]),"json");
+                //guardarDatos("C:/xampp/htdocs/phpcasero/php_project/Backend/jsons/passwds.json", array($_POST["username"] => $_POST["password"]),"json");
                 return (false);
             }
         }
@@ -185,8 +185,13 @@
     }
     
     function checkPasswd($username, $passwd){
-        $datos = cargarDatos("../Backend/passwds.json","json");
-        print_r($datos);
+        $datos = cargarDatos("../Backend/jsons/usersData.json","json");
+        if ($passwd == $datos[$username]["passwd"]) {
+            return (true);
+        }
+        else {
+            return (false);
+        }
     }
 
     #Procesado de datos
