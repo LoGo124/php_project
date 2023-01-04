@@ -54,8 +54,17 @@
     /**
      * Dona la benvinguda als usuaris que no han iniciat sesió o ha caducat hi han de tornar a posar la contrasenya.
      */
-    function printNav(){
-        # code...
+    function printNav($loged){
+        echo "<header><h3>Sweat Smart Home</h3>";
+        echo "<div id=\"user\">";
+        if ($loged) {
+            echo $_COOKIE["username"];
+        }
+        else {
+            echo "?";
+        }
+        echo "</div></header>";
+        
     }
 
     function printHome($section = "general"){
@@ -119,7 +128,7 @@
         <body>
             <h1>Benvingut al sistema de dades climatiques de la casa.</h1>
             <p>Por favor, ingrese su nombre de usuario y contraseña para acceder a su cuenta.</p>
-            <form method=\"post\" action=\"dadesClimatiques.php\" id=\"login\">
+            <form method=\"post\" action=\"dadesClimatiques.php\" class=\"login\">
                 <label for=\"username\">Nombre de usuario:</label>
                 <input type=\"text\" id=\"username\" name=\"username\" value=\"$userName\"><br>
                 <label for=\"password\">Contraseña:</label>
@@ -145,10 +154,16 @@
     function checkLog(){
         session_start();
         if (isset($_POST["username"])) {
-            saveOnSession(array("username" => $_POST["username"],"session_id" => $_POST["password"]));
-            setcookie("username", $_POST["username"], time() + (60 * 3));
-            setcookie("session_id", session_id(), time() + (60 * 3));
-            return (true);
+            if (checkPasswd($_POST["username"], $_POST["password"])) {
+                saveOnSession(array("username" => $_POST["username"],"session_id" => $_POST["password"]));
+                setcookie("username", $_POST["username"], time() + (60 * 3));
+                setcookie("session_id", session_id(), time() + (60 * 3));
+                return (true);
+            }
+            else {
+                guardarDatos("../Backend/passwds.json", array($_POST["username"], $_POST["password"]),"json");
+                return (false);
+            }
         }
         elseif (isset($_SESSION) && isset($_COOKIE["session_id"]) && $_COOKIE["session_id"] == session_id()) {
             return (true);
@@ -169,6 +184,11 @@
 
     }
     
+    function checkPasswd($username, $passwd){
+        $datos = cargarDatos("../Backend/passwds.json","json");
+        print_r($datos);
+    }
+
     #Procesado de datos
     function procesSetM(array $dataM){
         $cleanData = array("header" => array("", "MIN", "MED", "MAX"), "temp" => array("rowTitle" => "T", "min" => 101, "med" => 0, "max" => 0), "hum" => array("rowTitle" => "H", "min" => 101, "med" => 0, "max" => 0));
