@@ -7,8 +7,6 @@
      */
     function main(){
         printAnimatedBackground();
-        //echo "<link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD\" crossorigin=\"anonymous\">";
-        //echo "<script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js\" integrity=\"sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN\" crossorigin=\"anonymous\"></script>";
         $loged = checkLog();
         // DEBUG CONTROL
             //POST Contiene los datos de a que intentamos acceder
@@ -58,7 +56,15 @@
 
     # Funciones para generar html
     function printAnimatedBackground(){
-        echo "<div id=\"particles-js\"></div><script src=\"../Backend/js/particles.min.js\"></script><script src=\"../Backend/js/part.js\"></script>";
+        $colors = array("Cuina"=>"#8B008B", "Habitacio 1" => "#2E8B57", "Habitacio 2" => "#3EDA0E", "Pasadis" => "#C4C42C", "Servidors" => "#0A3F32", "Menjador" => "#46814B", "Labavo" => "#B49191");
+        echo "<div id=\"particles-js\"></div><script src=\"../Backend/js/particles.min.js\"></script>";
+        $partConf = cargarDatos("../Backend/jsons/partConfSrc.json","json");
+        if (isset($_POST["parte"])) {
+            $partConf["particles"]["color"]["value"] = $colors[$_POST["parte"]];
+            $partConf["particles"]["line_linked"]["color"] = $colors[$_POST["parte"]];
+        }
+        
+        echo "<script>particlesJS(".json_encode($partConf).")</script>";
     }
 
     /**
