@@ -6,7 +6,10 @@
 
 form {
     border: 2px solid black;
-    width: max-content;
+    width: 35%;
+    height: 550px;
+    background-color: burlywood;
+    
 };
 
 .login{
@@ -30,12 +33,12 @@ main {
     border-radius: 10%;
 }
 div {
-    height: 600px;
-    width: 1000px;
+    height: 530px;
+    width: 1009px;
     border: 5px solid;
     position: absolute;
-    top: 33%;
-    transform: translate(45%, -45%);
+    top: 29%;
+    transform: translate(75%, -50%);
     
    
    
@@ -58,6 +61,35 @@ div#Cuina{
 div#Habitacio\ 1{
     background-color:seagreen
 } 
+
+
+
+
+div#Dades\ de\ l\'\ any{
+    height: 250px;
+    width: 1000px;
+    border: 5px solid;
+    position: absolute;
+    top: 30%;
+    transform: translate(0, -45%);
+
+} 
+
+div#Dades\ del\ mes {
+    height: 250px;
+    width: 1000px;
+    border: 5px solid;
+    position: absolute;
+    top: 73%;
+    transform: translate(0, -45%);
+
+}
+
+
+.selectedClass {
+ background-color: red;
+    
+}
 
 body {
     background-color: rgb(124, 243, 243);
@@ -106,7 +138,9 @@ img {
 .tg  {
     border-collapse:collapse;
     border-spacing:0;
-    
+    box-sizing: border-box;
+    width: 100%;
+    height: 94%;
 }
 
 .tg td{
@@ -115,15 +149,13 @@ img {
     border-width:1px;
     font-family:Arial, sans-serif;
     font-size:14px;
-    padding:20px 20px;
-    word-break:normal;
-    height: 100px;
+    
+   
 }
 
 .tg .tg-0pky{
     border-color:inherit;
-    text-align:left;
-    vertical-align:top;
+   
 
 }
 
