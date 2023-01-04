@@ -16,7 +16,7 @@
         #    //SESSION Contiene los datos del usuario
         #print_r($_SESSION);
         #print_r(session_id());
-        
+        printNav($loged);
         if ($loged && isset($_POST["parte"])) {
             printHome($_POST["parte"]);
             if ($MyDB = new DB("127.0.0.1","user","aplicacions","dadesAmbientals",3306)) {
@@ -56,12 +56,12 @@
      */
     function printNav($loged){
         echo "<header><h3>Sweat Smart Home</h3>";
-        echo "<div id=\"user\">";
+        echo "<div class=\"user\">";
         if ($loged) {
             echo $_COOKIE["username"];
         }
         else {
-            echo "?";
+            echo "";
         }
         echo "</div></header>";
         
