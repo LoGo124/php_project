@@ -185,7 +185,7 @@
     }
     
     function checkPasswd($username, $passwd){
-        $datos = cargarDatos("C:/xampp/htdocs/phpcasero/php_project/Backend/jsons/usersData.json","json");
+        $datos = cargarDatos("../Backend/jsons/usersData.json","json");
         if ($passwd == $datos[$username]["passwd"]) {
             return (true);
         }
