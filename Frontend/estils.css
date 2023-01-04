@@ -2,19 +2,11 @@
 
 * {
     font-family: 'Montserrat', sans-serif;
-}
-header{
-    background-color: blueviolet;
-    height: 100%;
-    text-align: left;
-    font-size: 30px;
-    height: 40px;
-    margin: 0px;
-    padding: 1%;
+    color: #fff;
 }
 
-h3{
-    margin: 5px;
+input{
+    color: black;
 }
 
 header div{
@@ -26,6 +18,33 @@ header div{
     margin: 0px;
     padding: 0%;
 }
+
+div#particles-js{
+    height: 100vh;
+    width: 100%;
+    position: fixed;
+    z-index: -1;
+    margin: 0px;
+    background-color: black;
+    border: 0px;
+}
+
+header{
+    background-color: blueviolet;
+    height: 100%;
+    text-align: left;
+    font-size: 30px;
+    height: 40px;
+    margin: 0px;
+    padding: 1%;
+}
+
+h3{
+    color: black;
+    margin: 5px;
+}
+
+
 
 .login{
     position: relative;
@@ -114,26 +133,26 @@ div div table{
     
 }
 
-
-
 body {
     background-color: rgb(124, 243, 243);
     text-align: center;
     margin: 0%;
 }
+
 li {
     text-align: center;
     list-style: none;
 }
+
 th {
     text-align: center;
     background-color: whitesmoke;
 }
+
 td {
     text-align: center;
     border: 2px;
     background-color: dimgrey;
-    
 }
 
 label {
@@ -165,7 +184,6 @@ img {
     border-collapse:collapse;
     border-spacing:0;
     box-sizing: border-box;
-    
 }
 
 .tg td{
@@ -175,14 +193,11 @@ img {
     font-family:Arial, sans-serif;
     font-size:14px;
     padding: 12% 0%;
-   
 }
 
 .tg .tg-0pky{
     border-color:black;
     padding: 12% 0%;
-    
-
 }
 
 table{

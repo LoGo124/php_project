@@ -6,6 +6,7 @@
      * 
      */
     function main(){
+        printAnimatedBackground();
         //echo "<link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD\" crossorigin=\"anonymous\">";
         //echo "<script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js\" integrity=\"sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN\" crossorigin=\"anonymous\"></script>";
         $loged = checkLog();
@@ -56,6 +57,10 @@
     }
 
     # Funciones para generar html
+    function printAnimatedBackground(){
+        echo "<div id=\"particles-js\"></div><script src=\"../Backend/js/particles.min.js\"></script><script src=\"../Backend/js/part.js\"></script>";
+    }
+
     /**
      * Dona la benvinguda als usuaris que no han iniciat sesió o ha caducat hi han de tornar a posar la contrasenya.
      */
@@ -183,7 +188,7 @@
     
     function checkPasswd($username, $passwd){
         $datos = cargarDatos("../Backend/jsons/usersData.json","json");
-        if ($passwd == $datos[$username]["passwd"]) {
+        if (isset($datos[$username]) && $passwd == $datos[$username]["passwd"]) {
             return (true);
         }
         else {
