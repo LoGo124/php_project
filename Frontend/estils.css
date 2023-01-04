@@ -4,6 +4,19 @@
     font-family: 'Montserrat', sans-serif;
 }
 
+.login{
+    border: 2px solid black;
+    width: max-content;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    height: 30%;
+    width: 20%;
+    padding: 5% 5%;
+    background-color: tomato;
+} 
+
+
 form {
     border: 2px solid black;
     width: 35%;
@@ -12,13 +25,7 @@ form {
     
 };
 
-.login{
-    border: 2px solid black;
-    width: max-content;
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-}
+
 
 h2 {
     color: blue;
@@ -33,24 +40,25 @@ main {
     border-radius: 10%;
 }
 div {
-    height: 530px;
-    width: 1009px;
+    height: 55%;
+    width: 50%;
     border: 5px solid;
     position: absolute;
     top: 29%;
     transform: translate(75%, -50%);
-    
+    background-color: rgb(86, 86, 87);
    
    
     
 }
 div div {
-    height: 250px;
-    width: 1000px;
+    height: 50%;
+    width: 99%;
     border: 5px solid;
     position: absolute;
-    top: 30%;
+    top: 35%;
     transform: translate(0, -45%);
+    background-color: aliceblue;
     
 }
 
@@ -62,26 +70,34 @@ div#Habitacio\ 1{
     background-color:seagreen
 } 
 
+div#Habitacio\ 2{
+    background-color: rgb(62, 218, 14);
+}
 
+div#Pasadis{
+    background-color:rgb(196, 196, 44)
+} 
 
+div#Servidors{
+    background-color:rgb(10, 63, 50)
+} 
 
-div#Dades\ de\ l\'\ any{
-    height: 250px;
-    width: 1000px;
-    border: 5px solid;
-    position: absolute;
-    top: 30%;
-    transform: translate(0, -45%);
+div#Menjador{
+    background-color:rgb(70, 129, 75)
+} 
 
+div#Labavo{
+    background-color:rgb(180, 145, 145)
 } 
 
 div#Dades\ del\ mes {
-    height: 250px;
-    width: 1000px;
+    height: 35%;
+    width: 99%;
     border: 5px solid;
     position: absolute;
-    top: 73%;
+    top: 80%;
     transform: translate(0, -45%);
+    background-color: aliceblue;
 
 }
 
@@ -165,3 +181,4 @@ table{
     width: 50px;
     
 }
+
