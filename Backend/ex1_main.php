@@ -2,7 +2,6 @@
     include "phpLibs/general_tools.php";
     include "phpLibs/MySQL_PDO.php";
 
-
     /**
      * 
      */
@@ -11,42 +10,44 @@
         // DEBUG CONTROL
             //POST Contiene los datos de a que intentamos acceder
         #print_r($_POST);
-        #    //COOKIE Contiene los datos de la ultima conexión tmb login y passwd, si hace mas de 3h o no hay, se conecta a la base de datos para actualizar los datos
+            //COOKIE Contiene los datos de la ultima conexión tmb login y passwd, si hace mas de 3h o no hay, se conecta a la base de datos para actualizar los datos
         #print_r($_COOKIE);
-        #    //SESSION Contiene los datos del usuario
+            //SESSION Contiene los datos del usuario
         #print_r($_SESSION);
         #print_r(session_id());
         printNav($loged);
-        if ($loged && isset($_POST["parte"])) {
-            printHome($_POST["parte"]);
+        if ($loged) {
             if ($MyDB = new DB("127.0.0.1","user","aplicacions","dadesAmbientals",3306)) {
-                $rawYData = $MyDB->getData("dades_any","ubicacio='".$_POST["parte"]."'");
-                $rawMData = $MyDB->getData("dades_mes","ubicacio='".$_POST["parte"]."'");
+                if (isset($_POST["parte"])) {
+                    printHome($_POST["parte"]);
+                    $ubi = "ubicacio='".$_POST["parte"]."'";
+                }
+                else {
+                    printHome();
+                    $ubi = "ubicacio = ubicacio";
+                }
+                $rawYData = $MyDB->getData("dades_any",$ubi);
+                $rawMData = $MyDB->getData("dades_mes",$ubi);
+                $rawDData = $MyDB->getData("dades_mes",$ubi." AND `datahora` LIKE '%".date("Y-m-d")."%'");
                 
                 $YData = procesSetY($rawYData);
                 $MData = procesSetM($rawMData);
+                $DData = procesSetD($rawDData);
 
-                printDatos($YData, $MData, $_POST["parte"]);
+                printDatos($YData, $MData, $DData);
             }
             else {
                 echo "<h1>[-] No s'ha pogut accedir a la base de dades.</h1>";
             }
         }
-        elseif ($loged) {
-            printHome();
-            if ($MyDB = new DB("127.0.0.1","user","aplicacions","dadesAmbientals",3306)) {
-                # DATOS GENERALES
-                $rawYData = $MyDB->getData("dades_any");
-                $rawMData = $MyDB->getData("dades_mes");
-                
-                $YData = procesSetY($rawYData);
-                $MData = procesSetM($rawMData);
-
-                printDatos($YData, $MData);
-            }
-            else {
-                echo "<h1>[-] No s'ha pogut accedir a la base de dades.</h1>";
-            }
+        elseif (isset($_SESSION)) {
+            printLoginPage($_SESSION["username"]);
+        }
+        elseif (isset($_COOKIE["username"])) {
+            printLoginPage($_COOKIE["username"]);
+        }
+        else {
+            printLoginPage();
         }
     }
 
@@ -113,10 +114,12 @@
         </form>";
     }
 
-    function printDatos($YData, $MData, $section = "GENERAL"){
+    function printDatos($YData, $MData, $DData){
+        $section = (isset($_POST["parte"])) ? $_POST["parte"] : "GENERAL" ;
         echo "<div id=\"$section\"><h2>".$section."</h2>";
         printTable($YData, "Dades de l'any");
         printTable($MData, "Dades del mes");
+        printTable($DData, "Dades del dia");
         echo"</div>";
     }
 
@@ -158,7 +161,6 @@
                 saveOnSession(array("username" => $_POST["username"],"session_id" => $_POST["password"]));
                 setcookie("username", $_POST["username"], time() + (60 * 20));
                 setcookie("session_id", session_id(), time() + (60 * 20));
-                unset($_POST["username"]);
                 return (true);
             }
             else {
@@ -168,17 +170,7 @@
         elseif (isset($_SESSION) && isset($_COOKIE["session_id"]) && $_COOKIE["session_id"] == session_id()) {
             return (true);
         }
-        elseif (isset($_SESSION["username"])) {
-            printError("Sessio caducada");
-            printLoginPage($_SESSION["username"]);
-            return (false);
-        }
-        elseif (isset($_COOKIE["username"])) {
-            printLoginPage($_COOKIE["username"]);
-            return (false);
-        }
         else {
-            printLoginPage();
             return (false);
         }
 
@@ -195,6 +187,25 @@
     }
 
     #Procesado de datos
+    function procesSetD(array $dataD){
+        $cleanData = array("header" => array("", "MIN", "MED", "MAX"), "temp" => array("rowTitle" => "T", "min" => 101, "med" => 0, "max" => 0), "hum" => array("rowTitle" => "H", "min" => 101, "med" => 0, "max" => 0));
+        $count = 0;
+        foreach ($dataD as $id => $reg) {
+            $temp[] = $reg["temperatura"];
+            $hum[] = $reg["humitat"];
+            $cleanData["temp"]["med"] += $reg["temperatura"];
+            $cleanData["hum"]["med"] += $reg["humitat"];
+            $count++;
+        }
+        $cleanData["temp"]["min"] = min($temp);
+        $cleanData["temp"]["max"] = max($temp);
+        $cleanData["hum"]["min"] = min($hum);
+        $cleanData["hum"]["max"] = max($hum);
+        $cleanData["temp"]["med"] = round(($cleanData["temp"]["med"] / $count), 2);
+        $cleanData["hum"]["med"] = round(($cleanData["hum"]["med"] / $count), 2);
+        return($cleanData);
+    }
+
     function procesSetM(array $dataM){
         $cleanData = array("header" => array("", "MIN", "MED", "MAX"), "temp" => array("rowTitle" => "T", "min" => 101, "med" => 0, "max" => 0), "hum" => array("rowTitle" => "H", "min" => 101, "med" => 0, "max" => 0));
         $count = 0;
