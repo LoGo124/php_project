@@ -5,18 +5,25 @@
     color: #fff;
 }
 
+legend{
+    color: black;
+    background-color: white;
+}
+
 input{
     color: black;
 }
 
-header div{
+header button{
+    color: black;
     position: relative;
     float: right;
-    height: auto;
+    height: 100%;
     width: auto;
-    top: 1px;
+    top: 0px;
     margin: 0px;
-    padding: 0%;
+    padding-left: 1%;
+    padding-right: 1%;
 }
 
 div#particles-js{
@@ -204,4 +211,54 @@ table{
     margin-left: auto;
     margin-right: auto;
     width: 100%;
+}
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    float: none;
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: auto; /* Full height */
+    margin: 0%;
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+  
+  /* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    float: none;
+    width: auto; /* Could be more or less, depending on screen size */
+    color: black;
+}
+.modal-content p{
+    color: black;
+}
+
+.modal-content form{
+    position: relative;
+    margin:auto;
+    float:none;
+    align-self: center;
+}
+  
+  /* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+  
+.close:hover, .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }

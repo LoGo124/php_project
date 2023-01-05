@@ -6,18 +6,23 @@
      * 
      */
     function main(){
-        printAnimatedBackground();
-        $loged = checkLog();
-        // DEBUG CONTROL
-            //POST Contiene los datos de a que intentamos acceder
-        #print_r($_POST);
-            //COOKIE Contiene los datos de la ultima conexión tmb login y passwd, si hace mas de 3h o no hay, se conecta a la base de datos para actualizar los datos
-        #print_r($_COOKIE);
-            //SESSION Contiene los datos del usuario
-        #print_r($_SESSION);
-        #print_r(session_id());
-        printNav($loged);
-        if ($loged) {
+        print_r($_POST);
+        print_r($_COOKIE);
+        scriptAnimBg();
+        if (isset($_POST["Surt"])) {
+            session_start();
+            session_destroy();
+            if ($_POST["Surt"] == "Canviar de sessió") {
+                unset($_COOKIE);
+            }
+        }
+        $uData = checkLog();
+        printNav($uData);
+        if (isset($_POST["crea"]) && $uData && $uData["cUsers"]) {
+            printRegUserForm();
+        }
+        elseif ($uData) {
+            printModal($uData);
             if ($MyDB = new DB("127.0.0.1","user","aplicacions","dadesAmbientals",3306)) {
                 if (isset($_POST["parte"])) {
                     printHome($_POST["parte"]);
@@ -43,11 +48,8 @@
                 echo "<h1>[-] No s'ha pogut accedir a la base de dades.</h1>";
             }
         }
-        elseif (isset($_SESSION["username"])) {
-            printLoginPage($_SESSION["username"]);
-        }
-        elseif (isset($_COOKIE["username"])) {
-            printLoginPage($_COOKIE["username"]);
+        elseif (isset($_SESSION["username"]) || isset($_COOKIE["username"])) {
+            printLoginPage((isset($_SESSION["username"])) ? $_SESSION["username"] : $_COOKIE["username"]);
         }
         else {
             printLoginPage();
@@ -55,31 +57,35 @@
     }
 
     # Funciones para generar html
-    function printAnimatedBackground(){
-        $colors = array("Cuina"=>"#8B008B", "Habitacio 1" => "#2E8B57", "Habitacio 2" => "#3EDA0E", "Pasadis" => "#C4C42C", "Servidors" => "#0A3F32", "Menjador" => "#46814B", "Labavo" => "#B49191");
-        echo "<div id=\"particles-js\"></div><script src=\"../Backend/js/particles.min.js\"></script>";
-        $partConf = cargarDatos("../Backend/jsons/partConfSrc.json","json");
-        if (isset($_POST["parte"])) {
-            $partConf["particles"]["color"]["value"] = $colors[$_POST["parte"]];
-            $partConf["particles"]["line_linked"]["color"] = $colors[$_POST["parte"]];
-        }
-        
-        echo "<script>particlesJS(".json_encode($partConf).")</script>";
-    }
-
+    
     /**
      * Dona la benvinguda als usuaris que no han iniciat sesió o ha caducat hi han de tornar a posar la contrasenya.
      */
     function printNav($loged){
         echo "<header> <a href=\"dadesClimatiques.php\">Sweat Smart Home</a> ";
-        echo "<div class=\"user\">";
         if ($loged) {
-            echo (isset($_COOKIE["username"])) ? $_COOKIE["username"] : $_POST["username"];
+            echo "<button id=\"userBtn\">".$_SESSION["username"]."</button>";
         }
-        else {
-            echo "";
+        echo "</header>";
+    }
+
+    function printModal($uData){
+        $cUserBtn = "";
+        if ($uData["cUsers"]) {
+            $cUserBtn = "<input type=\"submit\" value=\"Crear un nou usuari\" name=\"crea\">";
         }
-        echo "</div></header>";
+        echo "  <div id=\"myModal\" class=\"modal\">
+                    <div class=\"modal-content\">
+                        <span class=\"close\">&times;</span>
+                        <form action=\"dadesClimatiques.php\" method=\"post\">
+                            <legend>Que vols fer?</legend>
+                            <input type=\"submit\" value=\"Tancar Sessió\" name=\"Surt\">
+                            <input type=\"submit\" value=\"Canviar de sessió\" name=\"Surt\">
+                            ".$cUserBtn."
+                        </form>
+                    </div>
+                </div>";
+        scriptModal();
         
     }
 
@@ -169,22 +175,40 @@
         }
     }
 
+    function printRegUserForm(){
+        echo "<p>Siusplau, ingresi el seu nom d'usuari i repeteixi la contrasenya per a registrar aquest copte i logejar amb ell.</p>
+            <form method=\"post\" action=\"dadesClimatiques.php\" class=\"login\">
+                <label for=\"username\">Nom d'usuari:</label>
+                <input type=\"text\" id=\"username\" name=\"username\"><br>
+                <label for=\"password\">Contrasenya:</label>
+                <input type=\"password\" id=\"password\" name=\"password\"><br><br>
+                <input type=\"submit\" value=\"Registrar\" name=\"reg\">
+            </form>";
+    }
+
     #Security
     function checkLog(){
         session_start();
-        if (isset($_POST["username"])) {
-            if (checkPasswd($_POST["username"], $_POST["password"])) {
-                saveOnSession(array("username" => $_POST["username"],"session_id" => $_POST["password"]));
+        if (isset($_POST["reg"])) {
+            $datos = cargarDatos("../Backend/jsons/usersData.json","json");
+            $datos[$_POST["username"]] = array("passwd" => $_POST["password"], "cUsers" => false);
+            guardarDatos("../Backend/jsons/usersData.json", $datos,"json");
+            return($datos[$_POST["username"]]);
+        }
+        elseif (isset($_POST["username"])) {
+            if ($uData = checkPasswd($_POST["username"], $_POST["password"])) {
+                saveOnSession(array("username" => $_POST["username"]));
                 setcookie("username", $_POST["username"], time() + (60 * 20));
                 setcookie("session_id", session_id(), time() + (60 * 20));
-                return (true);
+                return ($uData);
             }
             else {
                 return (false);
             }
         }
-        elseif (isset($_SESSION) && isset($_COOKIE["session_id"]) && $_COOKIE["session_id"] == session_id()) {
-            return (true);
+        elseif (isset($_SESSION["username"]) && isset($_COOKIE["session_id"]) && $_COOKIE["session_id"] == session_id()) {
+            $datos = cargarDatos("../Backend/jsons/usersData.json","json");
+            return ($datos[$_SESSION["username"]]);
         }
         else {
             return (false);
@@ -195,7 +219,7 @@
     function checkPasswd($username, $passwd){
         $datos = cargarDatos("../Backend/jsons/usersData.json","json");
         if (isset($datos[$username]) && $passwd == $datos[$username]["passwd"]) {
-            return (true);
+            return ($datos[$username]);
         }
         else {
             return (false);
@@ -269,6 +293,43 @@
         $cleanData["temp"]["med"] = round(($cleanData["temp"]["med"] / $count), 2);
         $cleanData["hum"]["med"] = round(($cleanData["hum"]["med"] / $count), 2);
         return($cleanData);
+    }
+
+    #JavaScript
+
+    function scriptModal(){
+        echo "<script>
+            var modal = document.getElementById(\"myModal\");
+            
+            var btn = document.getElementById(\"userBtn\");
+            
+            var span = document.getElementsByClassName(\"close\")[0];
+
+            btn.onclick = function() {
+              modal.style.display = \"block\";
+            }
+
+            span.onclick = function() {
+              modal.style.display = \"none\";
+            }
+            
+            window.onclick = function(event) {
+              if (event.target == modal) {
+                modal.style.display = \"none\";
+              }
+            } 
+            </script>";
+    }
+
+    function scriptAnimBg(){
+        $colors = array("Cuina"=>"#8B008B", "Habitacio 1" => "#2E8B57", "Habitacio 2" => "#3EDA0E", "Pasadis" => "#C4C42C", "Servidors" => "#0A3F32", "Menjador" => "#46814B", "Labavo" => "#B49191");
+        echo "<div id=\"particles-js\"></div><script src=\"../Backend/js/particles.min.js\"></script>";
+        $partConf = cargarDatos("../Backend/jsons/partConfSrc.json","json");
+        if (isset($_POST["parte"])) {
+            $partConf["particles"]["color"]["value"] = $colors[$_POST["parte"]];
+            $partConf["particles"]["line_linked"]["color"] = $colors[$_POST["parte"]];
+        }
+        echo "<script>particlesJS(".json_encode($partConf).")</script>";
     }
 
     # Dev Tools (Preparación de la base de datos)

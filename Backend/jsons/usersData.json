@@ -1,1 +1,1 @@
-{"admin":{"passwd":"admin"},"gpal":{"passwd":"gpal"},"ilopez":{"passwd":"ilopez"}}
+{"admin":{"passwd":"admin","cUsers":true},"gpal":{"passwd":"gpal","cUsers":false},"ilopez":{"passwd":"ilopez","cUsers":false}}
