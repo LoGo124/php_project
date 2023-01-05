@@ -6,8 +6,6 @@
      * 
      */
     function main(){
-        print_r($_POST);
-        print_r($_COOKIE);
         scriptAnimBg();
         if (isset($_POST["Surt"])) {
             session_start();
