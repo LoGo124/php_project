@@ -191,7 +191,7 @@
             $datos = cargarDatos("../Backend/jsons/usersData.json","json");
             $datos[$_POST["username"]] = array("passwd" => $_POST["password"], "cUsers" => false);
             guardarDatos("../Backend/jsons/usersData.json", $datos,"json");
-            return($datos[$_POST["username"]]);
+            return($datos[$_SESSION["username"]]);
         }
         elseif (isset($_POST["username"])) {
             if ($uData = checkPasswd($_POST["username"], $_POST["password"])) {
