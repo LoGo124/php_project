@@ -2,8 +2,13 @@
     include "phpLibs/general_tools.php";
     include "phpLibs/MySQL_PDO.php";
 
-    /**
+    /** 
+     * Primer de tot si trobem el POST de tacar la sesió la destruim avans de comprobar si esta logejat, despres comprobem el cas
+     * que l'usuari vulguí crear un usuari i si te permisos, si no es així, en cas d'estar logejat printara la pàgina d'inici,
+     * la cual depenent de si li pasem una part per la casa o no, mostrara unas dades o altres, finalment si no esta logejat,
+     * printara la pàgina de logeig.
      * 
+     * @author ilopez
      */
     function main(){
         scriptAnimBg();
@@ -35,10 +40,10 @@
                 $rawMData = $MyDB->getData("dades_mes",$ubi);
                 $rawDData = $MyDB->getData("dades_mes",$ubi." AND `datahora` LIKE '%".date("Y-m-d")."%'");
                 
-                $LData = procesSetL($rawLData);
+                $LData = processLast($rawLData);
                 $YData = procesSetY($rawYData);
-                $MData = procesSetM($rawMData);
-                $DData = procesSetD($rawDData);
+                $MData = procesSet($rawMData);
+                $DData = procesSet($rawDData);
 
                 printDatos($LData, $YData, $MData, $DData);
             }
@@ -54,10 +59,15 @@
         }
     }
 
-    # Funciones para generar html
+    #################################################################
+    #                       HTML GENERATION                         #
+    #################################################################
     
-    /**
-     * Dona la benvinguda als usuaris que no han iniciat sesió o ha caducat hi han de tornar a posar la contrasenya.
+    /** 
+     * Genera el header, la barra de navegació, en cas d'estar logejat, tambó posa un botó am el nom de l'usuari i un id
+     * 
+     * @param * $loged Amb que no sigui equivalent a false ja es suficient per genera el botó. 
+     * @author gpal
      */
     function printNav($loged){
         echo "<header> <a href=\"dadesClimatiques.php\">Sweat Smart Home</a> ";
@@ -67,6 +77,10 @@
         echo "</header>";
     }
 
+    /** 
+     * Printa un modalbox, un div ocult amb un formular, aquest es torna visible cuan s'executa un script.
+     * @author ilopez
+     */
     function printModal($uData){
         $cUserBtn = "";
         if ($uData["cUsers"]) {
@@ -87,6 +101,14 @@
         
     }
 
+    /** 
+     * Genera uns planols d'una casa, amb un formulari que com a "action" s'apunta a si mateix, i un botó per cada part
+     * de la casa, i aplica un "class" sobre la secció seleccionada.
+     * 
+     * @param string $section si la string que es pasa coincideix amb una part de la casa aquesta quedara amb un class per 
+     * que s'apliqui un estil diferent, per defecte es "GENERAL", i només en aquest cas, aplica l'class a tots els elements. 
+     * @author gpal
+     */
     function printHome($section = "GENERAL"){
         $sectons = array("GENERAL", "Labavo", "Habitacio 1", "Habitacio 2", "Cuina", "Menjador", "Pasadis", "Servidors");
         $sectionsClasses = array();
@@ -133,6 +155,15 @@
         </form>";
     }
 
+    /** 
+     * Genera un div amb un titol i una clase depenent de la part de la part de la casa pasada pel POST.
+     * 
+     * @param array $LData array multidimensional amb l'ultim registre i una array dirgida a ser la capçalera de la taula.
+     * @param array $YData array multidimensional amb els registres de l'any anterior i una array dirgida a ser la capçalera de la taula.
+     * @param array $MData array multidimensional amb els registres d'aquest mes i una array dirgida a ser la capçalera de la taula.
+     * @param array $DData array multidimensional amb els registres d'avui i una array dirgida a ser la capçalera de la taula.
+     * @author gpal & ilopez4
+     */
     function printDatos($LData, $YData, $MData, $DData){
         $section = (isset($_POST["parte"])) ? $_POST["parte"] : "GENERAL" ;
         echo "<div id=\"$section\"><h2>".$section."</h2>";
@@ -141,8 +172,16 @@
         printTable($MData, "Dades del mes");
         printTable($DData, "Dades del dia");
         echo"</div>";
+        
     }
 
+    /** 
+     * Genera la pàgina de "Login", amb un formulari que com a "action" s'apunta a si mateix, el nom d'usuari 
+     * es autocompletable.
+     * 
+     * @param string $userName Per defecte es una string buida, el que li pasem, sera el valor per defecte del camp "username"
+     * @author gpal
+     */
     function printLoginPage($userName = ""){
         echo "
         <head>
@@ -161,18 +200,11 @@
         </body>";
     }
 
-    function printError(string $var = "Unknown"){
-        if ($var == "repe") {
-            echo "<h1> ESTA REPETIDO </h1>";
-        }
-        elseif ($var == "Unknown") {
-            echo "<h1> ERROR DESCONEGUT </h1>";
-        }
-        else {
-            echo "<h1> ERROR $var </h1>";
-        }
-    }
-
+    /** 
+     * Genera la pàgina de "Signup" o registre, amb un formulari que com a "action" s'apunta a si mateix
+     * 
+     * @author gpal
+     */
     function printRegUserForm(){
         echo "<p>Siusplau, ingresi el seu nom d'usuari i repeteixi la contrasenya per a registrar aquest copte i logejar amb ell.</p>
             <form method=\"post\" action=\"dadesClimatiques.php\" class=\"login\">
@@ -184,7 +216,20 @@
             </form>";
     }
 
-    #Security
+    #################################################################
+    #                           SECURITY                            #
+    #################################################################
+
+    /** 
+     * Inicia la sessió, i comprova els valors de $_POST per decidir si intentar logejar o registrar un nou usuari (sense permisos), 
+     * en cas de logeja un nou usuari mantindra la sessió anterior (usuari creador) oberta, en cas de ser un intent de "login"
+     * i de ser correcta la contrasenya, guarda el "username" a la sessió i a la cookie, pero també és molt important que a mes,
+     * a la cookie guarda l'identificador de la sessió (l'ús s'explica en el main) i finalment, en cas d trobar les dades ja emmagatzemades,
+     * retorna true
+     * 
+     * @return array|bool en cas de logejar correctament, retorna les dades de l'usuari, sino, retorna false.
+     * @author gpal
+     */
     function checkLog(){
         session_start();
         if (isset($_POST["reg"])) {
@@ -214,6 +259,16 @@
 
     }
     
+    /** 
+     * En cas de que el nom d'usuari i contrasenya siguin correctes, retorna les dades de l'usuari trobades al mateix 
+     * fitxer que hem utilitzat per comprobar la contrasenya, en cas contrari retorna false.
+     * 
+     * @param string $username El nom d'usuari del que volem comprobar la contrasenya i/o rebre les dades.
+     * @param string $passwd La contrasenya que correspon a l'usuari, es necesaria per retornar les dades.
+     * @return array|bool Retorna false en cas de no coïncidir la contrasenya i en cas que sí, retorna les dades de l'usuari,
+     * trobades a l'arxiu, usersData.json com ara el permis per crear usuaris.
+     * @author gpal
+     */
     function checkPasswd($username, $passwd){
         $datos = cargarDatos("../Backend/jsons/usersData.json","json");
         if (isset($datos[$username]) && $passwd == $datos[$username]["passwd"]) {
@@ -224,16 +279,33 @@
         }
     }
 
-    #Procesado de datos
-    function procesSetL(array $dataL){
+    #################################################################
+    #                     PROCESADO DE DATOS                        #
+    #################################################################
+
+    /** 
+     * Prepara les dades de l'ultim registre rebut de la base de dades en un format de array multidimensional, afegint-li les capçeleres.
+     * 
+     * @param array $dataL Rep les dades crude de la resposta de la base de dades.
+     * @return array l'array multidimensional preparada per ser mostrada en forma de taula.
+     * @author gpal
+     */
+    function processLast(array $dataL){
         $LData = array_values($dataL)[0];
         return (array(array("Ubicacio","Data i hora", "T", "H"), array($LData["ubicacio"], $LData["datahora"], $LData["temperatura"], $LData["humitat"])));
     }
 
-    function procesSetD(array $dataD){
+    /**
+     * Prepara les dades mensuals o diaries rebudes de la base de dades en un format de array multidimensional, afegint-li les capçeleres.
+     * 
+     * @param array $data Rep les dades crude de la resposta de la base de dades.
+     * @return array l'array multidimensional preparada per ser mostrada en forma de taula.
+     * @author ilopez
+     */
+    function procesSet(array $data){
         $cleanData = array("header" => array("", "MIN", "MED", "MAX"), "temp" => array("rowTitle" => "T", "min" => 101, "med" => 0, "max" => 0), "hum" => array("rowTitle" => "H", "min" => 101, "med" => 0, "max" => 0));
         $count = 0;
-        foreach ($dataD as $id => $reg) {
+        foreach ($data as $id => $reg) {
             $temp[] = $reg["temperatura"];
             $hum[] = $reg["humitat"];
             $cleanData["temp"]["med"] += $reg["temperatura"];
@@ -249,25 +321,13 @@
         return($cleanData);
     }
 
-    function procesSetM(array $dataM){
-        $cleanData = array("header" => array("", "MIN", "MED", "MAX"), "temp" => array("rowTitle" => "T", "min" => 101, "med" => 0, "max" => 0), "hum" => array("rowTitle" => "H", "min" => 101, "med" => 0, "max" => 0));
-        $count = 0;
-        foreach ($dataM as $id => $reg) {
-            $temp[] = $reg["temperatura"];
-            $hum[] = $reg["humitat"];
-            $cleanData["temp"]["med"] += $reg["temperatura"];
-            $cleanData["hum"]["med"] += $reg["humitat"];
-            $count++;
-        }
-        $cleanData["temp"]["min"] = min($temp);
-        $cleanData["temp"]["max"] = max($temp);
-        $cleanData["hum"]["min"] = min($hum);
-        $cleanData["hum"]["max"] = max($hum);
-        $cleanData["temp"]["med"] = round(($cleanData["temp"]["med"] / $count), 2);
-        $cleanData["hum"]["med"] = round(($cleanData["hum"]["med"] / $count), 2);
-        return($cleanData);
-    }
-
+    /**
+     * Prepara les dades anuals rebudes de la base de dades en un format de array multidimensional, afegint-li les capçeleres.
+     * 
+     * @param array $dataY Rep les dades crude de la resposta de la base de dades.
+     * @return array l'array multidimensional preparada per ser mostrada en forma de taula.
+     * @author ilopez
+     */
     function procesSetY(array $dataY){
         $cleanData = array("header" => array("", "MIN", "MED", "MAX"), "temp" => array("rowTitle" => "T", "min" => 101, "med" => 0, "max" => 0), "hum" => array("rowTitle" => "H", "min" => 101, "med" => 0, "max" => 0));
         $count = 0;
@@ -293,8 +353,15 @@
         return($cleanData);
     }
 
-    #JavaScript
+    #################################################################
+    #                          JAVASCRIPT                           #
+    #################################################################
 
+    /** 
+     * Insereix un script que permet que amb el botó amb el nom d'usuari, es fagi visible un formulari ocult.
+     * 
+     * @author ilopez
+     */
     function scriptModal(){
         echo "<script>
             var modal = document.getElementById(\"myModal\");
@@ -319,6 +386,12 @@
             </script>";
     }
 
+    /** 
+     * Posa un div que fara de fons animat, carrega la configuracio per defecte d'un arxiu json i l'edita canviant el color
+     * de les particules en cas d'haber selecciont una part de la casa en espacific. 
+     * 
+     * @author ilopez
+     */
     function scriptAnimBg(){
         $colors = array("Cuina"=>"#8B008B", "Habitacio 1" => "#2E8B57", "Habitacio 2" => "#3EDA0E", "Pasadis" => "#C4C42C", "Servidors" => "#0A3F32", "Menjador" => "#46814B", "Labavo" => "#B49191");
         echo "<div id=\"particles-js\"></div><script src=\"../Backend/js/particles.min.js\"></script>";
@@ -330,8 +403,16 @@
         echo "<script>particlesJS(".json_encode($partConf).")</script>";
     }
 
-    # Dev Tools (Preparación de la base de datos)
+    #################################################################
+    #                           DEV TOOLS                           #
+    #################################################################
 
+    /** 
+     * Fa ús de la llibreria MySQL_PDO per connectar a la base de dades local, crear una base de dades, 2 taules dades_mes
+     * i dades_any i a continuació en cas de estar descomentat, crida a la funció genRegs().
+     * 
+     * @author ilopez
+     */
     function createDadesAmbientals(){
         if ($MyDB = new DB()) {
             if ($MyDB->creation("dadesAmbientals")==False){
@@ -360,6 +441,13 @@
         }
     }
 
+    /** 
+     * Fa ús de la mateixa llibreria per inserir a les dues taules un molt complert conjunt de registres
+     * dades_mes: Genera 3 registres diaris amb valors aleatoris per cada habitació en 3 momens diferents del día.
+     * dades_any: Genera 1 registre diari amb valors aleatoris per cada habitació 
+     * 
+     * @author gpal
+     */
     function genRegs(){
         $habs = array("Labavo", "Habitacio 1", "Habitacio 2", "Cuina", "Menjador", "Pasadis", "Servidors");
         $horas = array("00:00:00", "08:00:00", "16:00:00");

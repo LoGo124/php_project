@@ -127,6 +127,15 @@ function implodeKeyVal(array $arrayAsoc = null, string $sep = "", string $sepKey
     return $str;
 }
 
+function printError(string $var = "Unknown"){
+    if ($var == "Unknown") {
+        echo "<h1> ERROR DESCONEGUT </h1>";
+    }
+    else {
+        echo "<h1> ERROR $var </h1>";
+    }
+}
+
 function printTable($data, $titol = ""){
     if ($titol) {
         echo "<div id=\"$titol\"><h3>$titol</h3>";
@@ -146,22 +155,4 @@ function printTable($data, $titol = ""){
         echo "</div>";
     }
 }
-
-//function printTable(array $data, string $autoSelect = "" ){
-//    echo "<form action=\"dadesClimatiques.php\" method=\"post\"><table><tr><th>ID</th><th>Dispositiu</th><th>Data</th><th>Solicitant</th><th>Correu</th><th>Descripcio</th><th><input type=\"submit\" value=\"tot\" name=\"query\"></th></tr>";
-//    foreach ($data as $row) {
-//        echo "<tr>";
-//        foreach ($row as $key => $value) {
-//            if ($key == "id") {
-//                echo "<td><input type=\"submit\" value=\"$value\" name=\"mod\"></td>";
-//            }
-//            else {
-//                echo "<td>$value</td>";
-//            }
-//        }
-//        echo "<td><input type=\"checkbox\" name=\"".$row["id"]."\" $autoSelect></td></tr>";
-//    }
-//    echo "</table><input type=\"submit\" value=\"<---\" name=\"<---\"><input type=\"submit\" value=\"Esborrar\" name=\"del\"></form>";
-//    
-//}
 ?>

@@ -1,5 +1,21 @@
 <?php
+/**
+ * Es una clase que nomes emmagatzema una conexió a una base de dades, pero que conté una serie defuncións molt utils
+ * per administerar-la.
+ * 
+ * @author ilopez
+ */
 class DB{
+    /**
+     * Una funció constructora, estableix la conexió i retorna false en cas de no poder establir-la.
+     * 
+     * @param string $DBHost la ip del servidor.
+     * @param string $DBUser el nom d'usuari amb el que conectar-se.
+     * @param string $DBPassword la contrasenya que correspon a l'usuari
+     * @param string $DBName El nom de la base de dades
+     * 
+     * @param int
+     */
     function __construct(String $DBHost = "127.0.0.1", String $DBUser = "root", String $DBPassword = "", String $DBName = "", int $DBPort = 3306){
         try {
             $this->conn = new PDO("mysql:host=$DBHost;dbname=$DBName", $DBUser, $DBPassword);
