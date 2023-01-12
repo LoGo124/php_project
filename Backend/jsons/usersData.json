@@ -1,1 +1,22 @@
-{"admin":{"passwd":"admin","cUsers":true},"gpal":{"passwd":"gpal","cUsers":false},"ilopez":{"passwd":"ilopez","cUsers":false},"a":{"passwd":"a","cUsers":false},"naomy":{"passwd":"naomy","cUsers":false}}
+{
+    "admin": {
+        "passwd": "admin",
+        "cUsers": true
+    },
+    "gpal": {
+        "passwd": "gpal",
+        "cUsers": false
+    },
+    "ilopez": {
+        "passwd": "ilopez",
+        "cUsers": false
+    },
+    "a": {
+        "passwd": "a",
+        "cUsers": false
+    },
+    "naomy": {
+        "passwd": "naomy",
+        "cUsers": false
+    }
+}
